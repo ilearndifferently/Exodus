@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Book of Exodus: An Interactive Study Guide</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        parchment: {
+                            50: '#fcfbf8',
+                            100: '#f9f6ef',
+                            200: '#f1ebd8',
+                            800: '#5c5236',
+                            900: '#4b432f',
+                        },
+                        egypt: '#b45309', /* Amber 700 - representing brick/desert */
+                        sinai: '#374151', /* Gray 700 - representing stone/mountain */
+                        tabernacle: '#c28e0e', /* Gold */
+                        heavenly: '#1d4ed8', /* Blue 700 - representing sky/water/priesthood */
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Merriweather', 'Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Minimal custom CSS to ensure proper chart container behavior and typography */
+        body {
+            background-color: #fcfbf8; /* Parchment 50 */
+            color: #1f2937;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 300px;
+        }
+        /* Smooth transitions for interactive elements */
+        .interactive-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .tab-active {
+            border-bottom: 2px solid #b45309;
+            color: #b45309;
+            font-weight: 600;
+        }
+        /* Scrollbar styling for inner content */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1ebd8; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af; 
+        }
+    </style>
+</head>
+<body class="antialiased font-sans flex flex-col min-h-screen">
+
+<!-- Chosen Palette: Desert Parchment (Off-whites, Amber, Slate, Gold) - Reflects the historical, ancient text nature of the subject while remaining clean and modern. -->
+
+<!-- Application Structure Plan: 
+The application acts as a digital dashboard for biblical study. 
+1. **Hero/Intro**: Sets the context and introduces the book.
+2. **Structural Overview (Visual)**: Uses a Chart.js Doughnut chart to visually break down the book into its three primary movements (Deliverance, Law, Presence), immediately giving users a mental map of the 40 chapters.
+3. **Interactive Study Hub**: A tabbed interface allowing users to filter content by the three main themes. This breaks the massive text into digestible chunks.
+4. **Story Cards**: Within each tab, chronological "cards" detail specific stories. These contain grid layouts separating historical data (characters/events) from theological analysis (themes/patterns/reflections), making complex analysis easy to scan and read.
+-->
+
+<!-- Visualization & Content Choices: 
+1. **Goal: Inform & Structure** -> **Viz: Doughnut Chart (Chart.js)** -> Shows the proportion of chapters dedicated to each major theme. Justification: Quickly establishes the macro-structure of the book before diving into details.
+2. **Goal: Organize & Explore** -> **Viz: Tabbed Navigation & Card Grid (HTML/Tailwind + JS)** -> Groups related stories under thematic umbrellas. Justification: Prevents cognitive overload; allows non-linear exploration of the text. NO SVG used, relying on CSS styling and layout for hierarchy.
+3. **Goal: Deep Analysis** -> **Viz: Segmented Text Blocks (HTML/Tailwind)** -> Separates "Historical Hyperlinks", "Design Patterns", and "Reflections" into distinct visual pills/lists. Justification: Clarifies different types of biblical study (typology vs. historical context vs. personal application).
+-->
+
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm border-b border-parchment-200 pt-12 pb-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">The Book of Exodus</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+                An interactive study guide exploring the journey from slavery to God's presence. Discover the historical context, overarching themes, and enduring applications of this foundational biblical narrative.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Overview Section with Chart -->
+        <section class="bg-white rounded-xl shadow-sm border border-parchment-200 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
+            <div class="md:w-1/2 space-y-4">
+                <h2 class="text-2xl font-serif font-bold text-gray-800">Architectural Overview</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    Exodus is not just a collection of stories; it is highly structured. It tells the epic story of God rescuing the Israelites from Egyptian slavery (Liberation), establishing a covenant relationship with them at Mount Sinai (Law), and instructing them to build a Tabernacle so His presence can dwell among them (Presence).
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 text-sm">
+                    <div class="bg-orange-50 p-3 rounded-lg border border-orange-100">
+                        <span class="font-bold text-egypt block">Ch 1-18</span>
+                        Deliverance from Egypt
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <span class="font-bold text-sinai block">Ch 19-24</span>
+                        Covenant & Law
+                    </div>
+                    <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                        <span class="font-bold text-tabernacle block">Ch 25-40</span>
+                        The Tabernacle
+                    </div>
+                </div>
+            </div>
+            <div class="md:w-1/2 w-full flex justify-center">
+                <!-- Chart Container -->
+                <div class="chart-container">
+                    <canvas id="macroStructureChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Study Hub -->
+        <section id="study-hub" class="space-y-6">
+            <div class="text-center">
+                <h2 class="text-3xl font-serif font-bold text-gray-900 mb-2">Interactive Exploration</h2>
+                <p class="text-gray-600 mb-6">Select a major theme to explore detailed chapters, stories, and analysis.</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex justify-center border-b border-gray-200 overflow-x-auto">
+                <nav class="flex space-x-8" aria-label="Tabs" id="theme-tabs">
+                    <!-- Tabs rendered by JS -->
+                </nav>
+            </div>
+
+            <!-- Dynamic Content Area -->
+            <div id="content-area" class="mt-8 space-y-8">
+                <!-- Content rendered by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-parchment-100 py-8 text-center">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="mb-2">A structural and thematic exploration of the Book of Exodus.</p>
+            <p class="text-sm text-gray-400">Designed for interactive biblical study and information architecture analysis.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- DATA ARCHITECTURE ---
+        // Storing the study guide content in a structured format.
+        const exodusData = {
+            themes: [
+                {
+                    id: 'deliverance',
+                    title: 'I. Deliverance',
+                    chapters: '1-18',
+                    colorClass: 'text-egypt border-egypt bg-orange-50',
+                    intro: 'This section details God hearing the cries of the enslaved Israelites, raising up Moses as a reluctant deliverer, defeating the gods of Egypt through the plagues, and leading the people through the Red Sea into the wilderness.',
+                    sections: [
+                        {
+                            title: 'Bondage and the Birth of a Deliverer',
+                            chapters: '1-4',
+                            characters: ['Moses', 'Pharaoh', 'Shiphrah & Puah (Midwives)', 'Miriam', 'Jethro', 'Yahweh'],
+                            events: ['Israelites multiply', 'Pharaoh orders infanticide', 'Moses placed in the Nile', 'Moses flees to Midian', 'The Burning Bush revelation', 'Moses\' objections'],
+                            biblical_refs: ['Genesis 15:13-14 (Prophecy of 400 years)', 'Hebrews 11:23-27 (Faith of Moses\' parents and Moses)'],
+                            themes: ['Oppression and suffering', 'Divine providence in hiding', 'God remembers His covenant', 'The revelation of the Divine Name (I AM)'],
+                            design_patterns: ['Water as a boundary of life/death (Nile)', 'The Reluctant Prophet motif', 'The Mountain of God (Horeb/Sinai) introduced early'],
+                            application: 'God often works through ordinary, flawed people and uses our wilderness experiences (Moses\' 40 years in Midian) to prepare us for His purposes.',
+                            reflection: 'Where in my life do I feel inadequate for what God is calling me to do, much like Moses at the burning bush?'
+                        },
+                        {
+                            title: 'The Plagues & The Passover',
+                            chapters: '5-13',
+                            characters: ['Moses', 'Aaron', 'Pharaoh', 'Magicians of Egypt'],
+                            events: ['Demand to let people go', '10 Plagues (Blood, Frogs, Gnats, Flies, Livestock, Boils, Hail, Locusts, Darkness, Firstborn)', 'Institution of Passover feast', 'The Exodus begins'],
+                            biblical_refs: ['Revelation 15-16 (Echoes of the plagues in the bowls of wrath)', '1 Corinthians 5:7 (Christ our Passover lamb)'],
+                            themes: ['De-creation (Plagues undoing Genesis 1 order)', 'Judgment against Egyptian deities', 'Substitutionary atonement (the lamb\'s blood)'],
+                            design_patterns: ['Hardening of the heart (Pharaoh vs. God)', 'The unblemished lamb', 'Deliverance through blood'],
+                            application: 'Salvation requires a substitute. Just as the Israelites were saved by the blood of the lamb, the New Testament teaches salvation through Christ\'s sacrifice.',
+                            reflection: 'How do I respond when my heart is challenged by God\'s authority? Do I yield, or do I harden my heart like Pharaoh?'
+                        },
+                        {
+                            title: 'The Red Sea & The Wilderness',
+                            chapters: '14-18',
+                            characters: ['Moses', 'Israelites', 'Pharaoh\'s Army', 'Jethro', 'Amalekites'],
+                            events: ['Crossing the Red Sea', 'Song of Moses', 'Bitter water at Marah', 'Manna and Quail provided', 'Water from the rock at Rephidim', 'Defeat of Amalek', 'Jethro\'s advice on leadership'],
+                            biblical_refs: ['1 Corinthians 10:1-4 (Baptism into Moses, spiritual food/drink)', 'John 6 (Jesus as the true bread from heaven)'],
+                            themes: ['Divine victory/Warrior God', 'Human grumbling and testing God', 'God\'s faithful provision in barren places'],
+                            design_patterns: ['Passing through waters (New Creation motif, echoing Noah)', 'The test in the wilderness (echoed by Jesus in Matt 4)'],
+                            application: 'God\'s provision is daily (manna). We must learn to trust Him for our immediate needs rather than hoarding or panicking in times of scarcity.',
+                            reflection: 'When I am in a "wilderness" season of life, is my default reaction to grumble or to look for God\'s provision?'
+                        }
+                    ]
+                },
+                {
+                    id: 'covenant',
+                    title: 'II. Covenant & Law',
+                    chapters: '19-24',
+                    colorClass: 'text-sinai border-sinai bg-gray-50',
+                    intro: 'Arriving at Mount Sinai, God offers to make Israel a "kingdom of priests and a holy nation." This section details the Ten Commandments and the foundational social laws intended to make Israel distinct from surrounding nations.',
+                    sections: [
+                        {
+                            title: 'Arrival at Sinai & The Ten Words',
+                            chapters: '19-20',
+                            characters: ['Yahweh', 'Moses', 'The Israelites'],
+                            events: ['Camping at Sinai', 'God descends in fire and smoke', 'Giving of the Ten Commandments (Decalogue)', 'People\'s fear of God\'s presence'],
+                            biblical_refs: ['Deuteronomy 5 (Restatement of the Ten Commandments)', 'Matthew 5-7 (Sermon on the Mount - Jesus expands the Law)'],
+                            themes: ['Holiness and boundaries', 'Grace precedes law (God saved them *before* giving rules)', 'Exclusive devotion to Yahweh'],
+                            design_patterns: ['The Mountaintop revelation', 'Thunder, lightning, and thick cloud (Theophany)'],
+                            application: 'The law is not a means to earn salvation, but the required lifestyle of those who have already been saved. It shows us how to love God and love our neighbor.',
+                            reflection: 'Do I view God\'s commands as restrictive rules, or as a loving framework for a flourishing life in relationship with Him?'
+                        },
+                        {
+                            title: 'The Book of the Covenant & Ratification',
+                            chapters: '21-24',
+                            characters: ['Moses', 'Aaron', 'Nadab & Abihu', '70 Elders'],
+                            events: ['Detailed case laws (servants, violence, property, justice)', 'Sabbath laws', 'Annual feasts instituted', 'Covenant confirmed with blood', 'Elders eat with God on the mountain'],
+                            biblical_refs: ['Hebrews 9:18-22 (The necessity of blood in covenants)', 'Luke 22:20 (The New Covenant in Christ\'s blood)'],
+                            themes: ['Justice and equity in society', 'Protection of the vulnerable (widow, orphan, foreigner)', 'Covenant relationship sealed by sacrifice'],
+                            design_patterns: ['The Covenant Meal', 'Ascent up the mountain'],
+                            application: 'True faith impacts how we treat others. The biblical vision of justice requires actively protecting the marginalized and ensuring fair restitution.',
+                            reflection: 'How does my understanding of God\'s justice influence how I treat people in my community and workplace?'
+                        }
+                    ]
+                },
+                {
+                    id: 'tabernacle',
+                    title: 'III. The Tabernacle',
+                    chapters: '25-40',
+                    colorClass: 'text-tabernacle border-tabernacle bg-yellow-50',
+                    intro: 'God provides detailed blueprints for a portable sanctuary (the Tabernacle) so He can dwell among His people. This narrative is tragically interrupted by the Golden Calf rebellion, requiring covenant renewal before the structure is built.',
+                    sections: [
+                        {
+                            title: 'Blueprints for the Holy Place',
+                            chapters: '25-31',
+                            characters: ['Moses', 'Bezalel & Oholiab (Artisans)'],
+                            events: ['Freewill offerings requested', 'Instructions for the Ark, Table, Lampstand', 'Tabernacle structure details', 'Altar and Courtyard', 'Priestly garments ordered', 'Sabbath reminder'],
+                            biblical_refs: ['Hebrews 8:5 (The earthly tent is a copy of heavenly realities)', 'John 1:14 (The Word became flesh and "tabernacled" among us)'],
+                            themes: ['God desires to dwell with humanity', 'Beauty and art in worship', 'Order and symmetry reflecting heavenly realities'],
+                            design_patterns: ['Eden imagery (gold, jewels, cherubim, lampstand as Tree of Life)', 'Microcosm of creation (7 speeches of instructions)'],
+                            application: 'God values craftsmanship and beauty. The spaces we create and the art we make can be acts of worship that reflect His glory.',
+                            reflection: 'How can I offer my specific skills, talents, and resources (my "freewill offering") to build up my community of faith?'
+                        },
+                        {
+                            title: 'Rebellion: The Golden Calf',
+                            chapters: '32-34',
+                            characters: ['Moses', 'Aaron', 'Joshua', 'Yahweh'],
+                            events: ['Moses delayed on mountain', 'Aaron makes the golden calf', 'God\'s wrath and Moses\' intercession', 'Moses breaks the tablets', 'Levites execute judgment', 'Covenant renewed and new tablets cut', 'God reveals His character (Ex 34:6-7)'],
+                            biblical_refs: ['Romans 1:23 (Exchanging the glory of God for images)', '1 Kings 12:28 (Jeroboam repeats the calf sin)'],
+                            themes: ['Human idolatry and impatience', 'The necessity of a mediator', 'God\'s tension between justice and profound mercy'],
+                            design_patterns: ['The broken covenant', 'The Intercessor standing in the gap'],
+                            application: 'Idolatry is not just bowing to statues; it is putting anything in the place of God to secure our anxiety when we feel God is absent or moving too slowly.',
+                            reflection: 'When I feel anxious or impatient with God\'s timing, what "golden calves" (control, wealth, approval) do I run to for comfort?'
+                        },
+                        {
+                            title: 'Construction & The Glory Descends',
+                            chapters: '35-40',
+                            characters: ['Moses', 'Bezalel', 'Oholiab', 'The Israelites'],
+                            events: ['People bring overflowing offerings', 'Artisans construct all elements precisely as commanded', 'Tabernacle assembled on New Year\'s Day', 'God\'s glory cloud fills the Tabernacle'],
+                            biblical_refs: ['1 Kings 8:10-11 (Glory fills Solomon\'s temple)', 'Revelation 21:3 (God\'s dwelling place is finally with humanity forever)'],
+                            themes: ['Obedience to divine instructions', 'The restoration of presence (Eden restored partially)'],
+                            design_patterns: ['Repetition of "as the Lord commanded Moses" (signaling complete obedience)'],
+                            application: 'When we construct our lives and communities according to God\'s design (obedience), we create space for His presence to dwell among us.',
+                            reflection: 'Exodus ends with God dwelling in the midst of a wandering people. How does knowing God travels with me change how I view my current journey?'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // --- STATE MANAGEMENT ---
+        let currentThemeId = 'deliverance';
+
+        // --- DOM ELEMENTS ---
+        const tabsContainer = document.getElementById('theme-tabs');
+        const contentArea = document.getElementById('content-area');
+
+        // --- INITIALIZATION ---
+        function init() {
+            renderTabs();
+            renderContent(currentThemeId);
+            drawChart();
+        }
+
+        // --- RENDERING FUNCTIONS ---
+
+        function renderTabs() {
+            tabsContainer.innerHTML = '';
+            exodusData.themes.forEach(theme => {
+                const btn = document.createElement('button');
+                btn.className = `whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                    theme.id === currentThemeId 
+                    ? `border-egypt text-egypt font-bold` 
+                    : `border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300`
+                }`;
+                // Override active color based on theme
+                if(theme.id === currentThemeId) {
+                     if(theme.id === 'deliverance') btn.classList.add('border-egypt', 'text-egypt');
+                     if(theme.id === 'covenant') btn.classList.add('border-sinai', 'text-sinai');
+                     if(theme.id === 'tabernacle') btn.classList.add('border-tabernacle', 'text-yellow-700');
+                }
+
+                btn.textContent = `${theme.title} (Ch ${theme.chapters})`;
+                btn.onclick = () => {
+                    currentThemeId = theme.id;
+                    renderTabs(); // Re-render to update active state
+                    renderContent(theme.id);
+                };
+                tabsContainer.appendChild(btn);
+            });
+        }
+
+        function renderContent(themeId) {
+            const theme = exodusData.themes.find(t => t.id === themeId);
+            if (!theme) return;
+
+            // Generate Intro Block
+            let html = `
+                <div class="${theme.colorClass} p-6 rounded-xl shadow-sm mb-8 animate-fade-in transition-all duration-300">
+                    <h3 class="text-2xl font-serif font-bold mb-3">${theme.title} Overview</h3>
+                    <p class="text-gray-700 text-lg leading-relaxed">${theme.intro}</p>
+                </div>
+                <div class="space-y-8">
+            `;
+
+            // Generate Story Cards
+            theme.sections.forEach(section => {
+                html += `
+                    <article class="interactive-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center flex-wrap gap-2">
+                            <h4 class="text-xl font-bold text-gray-900 font-serif">${section.title}</h4>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-800">
+                                Chapters ${section.chapters}
+                            </span>
+                        </div>
+                        
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                            
+                            <!-- Left Column: Historical Context -->
+                            <div class="space-y-6">
+                                <div>
+                                    <h5 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <span class="text-lg">👥</span> Key Characters
+                                    </h5>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${section.characters.map(c => `<span class="bg-parchment-100 text-gray-800 text-xs px-2 py-1 rounded border border-parchment-200">${c}</span>`).join('')}
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <span class="text-lg">📜</span> Major Events
+                                    </h5>
+                                    <ul class="list-disc list-inside text-gray-700 space-y-1 text-sm">
+                                        ${section.events.map(e => `<li>${e}</li>`).join('')}
+                                    </ul>
+                                </div>
+
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                    <h5 class="text-xs font-bold text-blue-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        🔗 Historical Hyperlinks
+                                    </h5>
+                                    <ul class="space-y-2 text-sm text-blue-900">
+                                        ${section.biblical_refs.map(r => `<li>• ${r}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Theological Analysis -->
+                            <div class="space-y-6">
+                                <div>
+                                    <h5 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <span class="text-lg">💡</span> Core Themes
+                                    </h5>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${section.themes.map(t => `<span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">${t}</span>`).join('')}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h5 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <span class="text-lg">📐</span> Biblical Design Patterns
+                                    </h5>
+                                    <ul class="list-disc list-inside text-gray-700 space-y-1 text-sm">
+                                        ${section.design_patterns.map(dp => `<li>${dp}</li>`).join('')}
+                                    </ul>
+                                </div>
+
+                                <div class="bg-parchment-50 p-4 rounded-lg border border-parchment-200 mt-4">
+                                    <h5 class="text-sm font-bold text-egypt mb-1">Application</h5>
+                                    <p class="text-sm text-gray-800 mb-3">${section.application}</p>
+                                    
+                                    <h5 class="text-sm font-bold text-sinai mb-1 mt-3 border-t border-parchment-200 pt-3">Reflection</h5>
+                                    <p class="text-sm text-gray-600 italic">"${section.reflection}"</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </article>
+                `;
+            });
+
+            html += `</div>`;
+            contentArea.innerHTML = html;
+        }
+
+        // --- CHART JS IMPLEMENTATION ---
+        function drawChart() {
+            const ctx = document.getElementById('macroStructureChart').getContext('2d');
+            
+            // Define data based on chapter counts: Deliverance (18), Law (6), Tabernacle (16)
+            const data = {
+                labels: ['Deliverance (Ch 1-18)', 'Covenant & Law (Ch 19-24)', 'The Tabernacle (Ch 25-40)'],
+                datasets: [{
+                    data: [18, 6, 16], 
+                    backgroundColor: [
+                        '#b45309', // Egypt Amber
+                        '#374151', // Sinai Slate
+                        '#c28e0e'  // Tabernacle Gold
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            };
+
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Important for fitting container
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                },
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        // Total chapters = 40
+                                        const percentage = Math.round((context.parsed / 40) * 100);
+                                        label += context.parsed + ' Chapters (' + percentage + '%)';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%', // Thinner ring
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            };
+
+            new Chart(ctx, config);
+        }
+
+        // Run initialization on load
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
